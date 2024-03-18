@@ -44,7 +44,7 @@ defmodule PetalComponents.Field do
       "a list of errors to display. If not passed, it will be generated automatically from the field. Format is a list of strings."
 
   attr :checked, :any, doc: "the checked flag for checkboxes and checkbox groups"
-  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :prompt, :string, default: nil, doc: "the prompt for select/switch inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :disabled_options, :list, default: [], doc: "the options to disable in a checkbox group"
@@ -168,6 +168,9 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <.field_label required={@required} for={@id} class={@label_class}>
+        <%= @label %>
+      </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
         <input type="hidden" name={@name} value="false" />
         <label class="pc-switch">
@@ -185,7 +188,7 @@ defmodule PetalComponents.Field do
           <span class="pc-switch__fake-input"></span>
           <span class="pc-switch__fake-input-bg"></span>
         </label>
-        <div class={[@required && "pc-label--required"]}><%= @label %></div>
+        <div><%= @prompt %></div>
       </label>
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
       <.field_help_text help_text={@help_text} />
