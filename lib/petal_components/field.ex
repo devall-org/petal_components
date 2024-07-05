@@ -91,6 +91,9 @@ defmodule PetalComponents.Field do
     default: false,
     doc: "is this field required? is passed to the input and adds an asterisk next to the label"
 
+  attr :on_message, :string, default: nil, doc: "message to display when switch is on"
+  attr :off_message, :string, default: nil, doc: "message to display when switch is off"
+
   attr :rest, :global,
     include:
       ~w(autocomplete autocorrect autocapitalize disabled form max maxlength min minlength list
@@ -194,21 +197,25 @@ defmodule PetalComponents.Field do
       </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
         <input type="hidden" name={@name} value="false" />
-        <label class={["pc-switch", "pc-switch--#{@size}"]}>
-          <input
-            type="checkbox"
-            id={@id}
-            name={@name}
-            value="true"
-            checked={@checked}
-            required={@required}
-            class={["sr-only peer", @class]}
-            {@rest}
-          />
+        <div class="flex gap-x-2">
+          <p :if={@off_message}><%= @off_message %></p>
+          <label class={["pc-switch", "pc-switch--#{@size}"]}>
+            <input
+              type="checkbox"
+              id={@id}
+              name={@name}
+              value="true"
+              checked={@checked}
+              required={@required}
+              class={["sr-only peer", @class]}
+              {@rest}
+            />
 
-          <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
-          <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
-        </label>
+            <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
+            <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
+          </label>
+          <p :if={@on_message}><%= @on_message %></p>
+        </div>
         <div><%= @prompt %></div>
       </label>
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
