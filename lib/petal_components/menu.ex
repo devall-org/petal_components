@@ -221,7 +221,7 @@ defmodule PetalComponents.Menu do
         if @current_item[:patch_group] &&
              @current_item[:patch_group] == @patch_group,
            do: "live_patch",
-           else: "live_redirect"
+           else: @link_type
       }
       class={menu_item_classes(@current_page, @name)}
     >
