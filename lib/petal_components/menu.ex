@@ -203,6 +203,7 @@ defmodule PetalComponents.Menu do
   attr :all_menu_items, :list, default: nil
   attr :patch_group, :atom, default: nil
   attr :link_type, :string, default: "live_redirect"
+  attr :rest, :global
 
   attr(:js_lib, :string,
     default: PetalComponents.default_js_lib(),
@@ -224,6 +225,7 @@ defmodule PetalComponents.Menu do
            else: @link_type
       }
       class={menu_item_classes(@current_page, @name)}
+      {@rest}
     >
       <.menu_icon :if={@icon} icon={@icon} is_active={@current_page == @name} />
       <div class="pc-vertical-menu-item__label"><%= @label %></div>
