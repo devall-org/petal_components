@@ -14,7 +14,7 @@ defmodule PetalComponents.Menu do
           %{
             name: :sign_in,
             label: "Sign in",
-            path: "/sign-in,
+            to: "/sign-in",
             icon: "hero-key",
           }
         ]
@@ -29,7 +29,7 @@ defmodule PetalComponents.Menu do
 
   This is the text that will be displayed in the menu.
 
-  ### Path
+  ### To
 
   This is the path that the user will be taken to when they click the menu item.
   The default link type is a live_redirect. This will work for non-live view links too.
@@ -39,10 +39,10 @@ defmodule PetalComponents.Menu do
   Let's say you have three menu items that point to the same live view. In this case we can utilize a live_patch link. To do this, you add the `patch_group` key to the menu item.
 
       [
-        %{name: :one, label: "One", path: "/one, icon: "hero-key", patch_group: :my_unique_group},
-        %{name: :two, label: "Two", path: "/two, icon: "hero-key", patch_group: :my_unique_group},
-        %{name: :three, label: "Three", path: "/three, icon: "hero-key", patch_group: :my_unique_group},
-        %{name: :another_link, label: "Other", path: "/other, icon: "hero-key"},
+        %{name: :one, label: "One", to: "/one, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :two, label: "Two", to: "/two, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :three, label: "Three", to: "/three, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :another_link, label: "Other", to: "/other, icon: "hero-key"},
       ]
 
   Now, if you're on page `:one`, and click a link in the menu to either `:two`, or `:three`, the live view will be patched because they are in the same `patch_group`. If you click `:another_link`, the live view will be redirected.
@@ -56,7 +56,7 @@ defmodule PetalComponents.Menu do
           %{
             name: :sign_in,
             label: "Sign in",
-            path: "/sign-in,
+            to: "/sign-in",
             icon: &my_cool_icon/1,
           }
         ]
@@ -67,7 +67,7 @@ defmodule PetalComponents.Menu do
           %{
             name: :sign_in,
             label: "Sign in",
-            path: "/sign-in,
+            to: "/sign-in",
             icon: "<svg>...</svg>",
           }
         ]
@@ -85,13 +85,13 @@ defmodule PetalComponents.Menu do
               %{
                 name: :sign_in,
                 label: "Sign in",
-                path: "/sign-in,
+                to: "/sign-in",
                 icon: "hero-key",
               },
               %{
                 name: :sign_up,
                 label: "Sign up",
-                path: "/sign-up,
+                to: "/sign-up",
                 icon: "hero-key",
               },
             ]
@@ -195,7 +195,7 @@ defmodule PetalComponents.Menu do
   end
 
   attr :current_page, :atom
-  attr :path, :string, default: nil
+  attr :to, :string, default: nil, doc: "link path"
   attr :icon, :any, default: nil
   attr :label, :string
   attr :name, :atom, default: nil
@@ -216,7 +216,7 @@ defmodule PetalComponents.Menu do
 
     ~H"""
     <.a
-      to={@path}
+      to={@to}
       link_type={
         if @current_item[:patch_group] &&
              @current_item[:patch_group] == @patch_group,
