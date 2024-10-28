@@ -225,7 +225,7 @@ defmodule PetalComponents.Field do
       <.field_label required={@required} for={@id} class={@label_class}>
         <%= @label %>
       </.field_label>
-      <input type="hidden" name={@name} value="" />
+      <input type="hidden" name={@name <> "[]"} value="" />
       <div class={[
         "pc-checkbox-group",
         @group_layout == "row" && "pc-checkbox-group--row",
