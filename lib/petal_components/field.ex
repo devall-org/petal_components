@@ -80,6 +80,8 @@ defmodule PetalComponents.Field do
     pattern placeholder readonly required size step value name multiple prompt default year month day hour minute second builder options layout cols rows wrap checked accept),
     doc: "All other props go on the input"
 
+  slot :inner_block
+
   def field(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
@@ -114,6 +116,7 @@ defmodule PetalComponents.Field do
         />
         <div class={[@required && "pc-label--required"]}>
           <%= @label %>
+          <%= render_slot(@inner_block) %>
         </div>
       </label>
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
