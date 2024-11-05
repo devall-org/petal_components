@@ -316,6 +316,10 @@
 
 /* Button - disabled */
 
+.pc-button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
 .pc-button--disabled {
   @apply opacity-50 cursor-not-allowed;
 }
