@@ -178,7 +178,7 @@ defmodule PetalComponents.Field do
         <%= @label %>
       </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
-        <input type="hidden" name={@name} value="false" />
+        <input type="hidden" name={@name} value="false" disbled={@disabled} />
         <div class="flex gap-x-2">
           <p :if={@off_message}><%= @off_message %></p>
           <label class="pc-switch">
@@ -189,6 +189,7 @@ defmodule PetalComponents.Field do
               value="true"
               checked={@checked}
               required={@required}
+              disbled={@disabled}
               class={["sr-only peer", @class]}
               {@rest}
             />
