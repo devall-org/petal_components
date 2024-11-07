@@ -47,6 +47,7 @@ defmodule PetalComponents.Field do
   attr :prompt, :string, default: nil, doc: "the prompt for select/switch inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :disabled, :boolean, default: false
   attr :disabled_options, :list, default: [], doc: "the options to disable in a checkbox group"
 
   attr :group_layout, :string,
@@ -76,7 +77,7 @@ defmodule PetalComponents.Field do
 
   attr :rest, :global,
     include:
-      ~w(autocomplete autocorrect autocapitalize disabled form max maxlength min minlength list
+      ~w(autocomplete autocorrect autocapitalize form max maxlength min minlength list
     pattern placeholder readonly required size step value name multiple prompt default year month day hour minute second builder options layout cols rows wrap checked accept),
     doc: "All other props go on the input"
 
@@ -103,7 +104,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
       <label class={["pc-checkbox-label", @label_class]}>
-        <input type="hidden" name={@name} value="false" />
+        <input type="hidden" name={@name} value="false" disabled={@disabled} />
         <input
           type="checkbox"
           id={@id}
@@ -111,6 +112,7 @@ defmodule PetalComponents.Field do
           value="true"
           checked={@checked}
           required={@required}
+          disabled={@disabled}
           class={["pc-checkbox", @class]}
           {@rest}
         />
@@ -137,6 +139,7 @@ defmodule PetalComponents.Field do
         class={["pc-text-input", @class]}
         multiple={@multiple}
         required={@required}
+        disabled={@disabled}
         {@rest}
       >
         <option :if={@prompt} value=""><%= @prompt %></option>
@@ -160,6 +163,7 @@ defmodule PetalComponents.Field do
         class={["pc-text-input", @class]}
         rows={@rows}
         required={@required}
+        disabled={@disabled}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
@@ -178,7 +182,7 @@ defmodule PetalComponents.Field do
         <%= @label %>
       </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
-        <input type="hidden" name={@name} value="false" />
+        <input type="hidden" name={@name} value="false" disabled={@disabled} />
         <div class="flex gap-x-2">
           <p :if={@off_message}><%= @off_message %></p>
           <label class="pc-switch">
@@ -189,6 +193,7 @@ defmodule PetalComponents.Field do
               value="true"
               checked={@checked}
               required={@required}
+              disabled={@disabled}
               class={["sr-only peer", @class]}
               {@rest}
             />
@@ -243,7 +248,7 @@ defmodule PetalComponents.Field do
               checked={to_string(value) in @checked}
               hidden_input={false}
               class="pc-checkbox"
-              disabled={value in @disabled_options}
+              disabled={@disabled or value in @disabled_options}
               {@rest}
             />
             <div>
@@ -289,6 +294,7 @@ defmodule PetalComponents.Field do
                 to_string(value) == to_string(@value) || to_string(value) == to_string(@checked)
               }
               class="pc-radio"
+              disabled={@disabled}
               {@rest}
             />
             <div>
@@ -317,6 +323,7 @@ defmodule PetalComponents.Field do
       id={@id}
       value={Phoenix.HTML.Form.normalize_value(@type, @value)}
       class={@class}
+      disabled={@disabled}
       {@rest}
     />
     """
@@ -338,6 +345,7 @@ defmodule PetalComponents.Field do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={@class}
         required={@required}
+        disabled={@disabled}
         {@rest}
       />
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
