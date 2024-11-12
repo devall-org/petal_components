@@ -15,7 +15,7 @@ defmodule PetalComponents.Menu do
             name: :sign_in,
             label: "Sign in",
             to: "/sign-in,
-            icon: :key,
+            icon: "hero-key",
           }
         ]
 
@@ -39,10 +39,10 @@ defmodule PetalComponents.Menu do
   Let's say you have three menu items that point to the same live view. In this case we can utilize a live_patch link. To do this, you add the `patch_group` key to the menu item.
 
       [
-        %{name: :one, label: "One", to: "/one, icon: :key, patch_group: :my_unique_group},
-        %{name: :two, label: "Two", to: "/two, icon: :key, patch_group: :my_unique_group},
-        %{name: :three, label: "Three", to: "/three, icon: :key, patch_group: :my_unique_group},
-        %{name: :another_link, label: "Other", to: "/other, icon: :key},
+        %{name: :one, label: "One", to: "/one, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :two, label: "Two", to: "/two, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :three, label: "Three", to: "/three, icon: "hero-key", patch_group: :my_unique_group},
+        %{name: :another_link, label: "Other", to: "/other, icon: "hero-key"},
       ]
 
   Now, if you're on page `:one`, and click a link in the menu to either `:two`, or `:three`, the live view will be patched because they are in the same `patch_group`. If you click `:another_link`, the live view will be redirected.
@@ -80,19 +80,19 @@ defmodule PetalComponents.Menu do
           %{
             name: :auth,
             label: "Auth",
-            icon: :key,
+            icon: "hero-key",
             menu_items: [
               %{
                 name: :sign_in,
                 label: "Sign in",
                 to: "/sign-in,
-                icon: :key,
+                icon: "hero-key",
               },
               %{
                 name: :sign_up,
                 label: "Sign up",
-                to: "/sign-up,
-                icon: :key,
+                path: "/sign-up,
+                to: "hero-key",
               },
             ]
           }
@@ -136,7 +136,6 @@ defmodule PetalComponents.Menu do
 
   def vertical_menu(%{menu_items: []} = assigns) do
     ~H"""
-
     """
   end
 
@@ -257,7 +256,8 @@ defmodule PetalComponents.Menu do
         </div>
 
         <div class="pc-vertical-menu-item__toggle-chevron__wrapper">
-          <Heroicons.chevron_right
+          <.icon
+            name="hero-chevron-right"
             id={@icon_id}
             {js_attributes("icon", @js_lib, %{class: "pc-vertical-menu-item__toggle-chevron__icon", name: @name, current_page: @current_page, menu_items: @menu_items})}
           />
@@ -279,8 +279,6 @@ defmodule PetalComponents.Menu do
 
   defp menu_icon(assigns) do
     ~H"""
-    <.icon :if={is_atom(@icon)} outline name={@icon} class={menu_icon_classes(@is_active)} />
-
     <%= if is_function(@icon) do %>
       <%= Phoenix.LiveView.TagEngine.component(
         @icon,
@@ -289,8 +287,12 @@ defmodule PetalComponents.Menu do
       ) %>
     <% end %>
 
-    <%= if is_binary(@icon) do %>
+    <%= if is_binary(@icon) && String.match?(@icon, ~r/svg|img/) do %>
       <%= Phoenix.HTML.raw(@icon) %>
+    <% end %>
+
+    <%= if is_binary(@icon) do %>
+      <.icon name={@icon} class={menu_icon_classes(@is_active)} />
     <% end %>
     """
   end

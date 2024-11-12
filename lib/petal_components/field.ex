@@ -222,7 +222,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label required={@required} class={@label_class}>
         <%= @label %>
       </.field_label>
       <input type="hidden" name={@name <> "[]"} value="" />
@@ -269,7 +269,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label required={@required} class={@label_class}>
         <%= @label %>
       </.field_label>
       <div class={[
@@ -379,9 +379,15 @@ defmodule PetalComponents.Field do
 
   def field_label(assigns) do
     ~H"""
-    <label for={@for} class={["pc-label", @class, @required && "pc-label--required"]} {@rest}>
-      <%= render_slot(@inner_block) %>
-    </label>
+    <%= if @for do %>
+      <label for={@for} class={["pc-label", @class, @required && "pc-label--required"]} {@rest}>
+        <%= render_slot(@inner_block) %>
+      </label>
+    <% else %>
+      <span class={["pc-label", @class, @required && "pc-label--required"]} {@rest}>
+        <%= render_slot(@inner_block) %>
+      </span>
+    <% end %>
     """
   end
 

@@ -34,7 +34,7 @@ defmodule PetalComponents do
     end
   end
 
-  @default_js_lib Application.compile_env(:petal_components, :default_js_lib, "live_view_js")
+  @default_js_lib Application.compile_env(:petal_components, :default_js_lib, "alpine_js")
   def default_js_lib() do
     @default_js_lib
   end

@@ -2,6 +2,7 @@ defmodule PetalComponents.Dropdown do
   use Phoenix.Component
   alias Phoenix.LiveView.JS
   alias PetalComponents.Link
+  import PetalComponents.Icon
 
   @transition_in_base "transition transform ease-out duration-100"
   @transition_in_start "transform opacity-0 scale-95"
@@ -33,7 +34,7 @@ defmodule PetalComponents.Dropdown do
   @doc """
     <.dropdown label="Dropdown" js_lib="alpine_js|live_view_js">
       <.dropdown_menu_item link_type="button">
-        <Heroicons.home class="w-5 h-5 text-gray-500" />
+        <.icon name="hero-home" class="w-5 h-5 text-gray-500" />
         Button item with icon
       </.dropdown_menu_item>
       <.dropdown_menu_item link_type="a" to="/" label="a item" />
@@ -64,7 +65,7 @@ defmodule PetalComponents.Dropdown do
 
           <%= if @label do %>
             <%= @label %>
-            <Heroicons.chevron_down solid class="pc-dropdown__chevron" />
+            <.icon name="hero-chevron-down-solid" class="h-5 w-5 pc-dropdown__chevron" />
           <% end %>
 
           <%= if @trigger_element do %>
@@ -72,7 +73,7 @@ defmodule PetalComponents.Dropdown do
           <% end %>
 
           <%= if !@label && @trigger_element == [] do %>
-            <Heroicons.ellipsis_vertical solid class="pc-dropdown__ellipsis" />
+            <.icon name="hero-ellipsis-vertical-solid" class="h-5 w-5pc-dropdown__ellipsis" />
           <% end %>
         </button>
       </div>
@@ -115,6 +116,7 @@ defmodule PetalComponents.Dropdown do
       to={@to}
       class={[@class, "pc-dropdown__menu-item", get_disabled_classes(@disabled)]}
       disabled={@disabled}
+      role="menuitem"
       {@rest}
     >
       <%= render_slot(@inner_block) || @label %>
@@ -161,12 +163,16 @@ defmodule PetalComponents.Dropdown do
   end
 
   defp js_attributes("container", "live_view_js", options_container_id) do
+    hide =
+      JS.hide(
+        to: "##{options_container_id}",
+        transition: {@transition_out_base, @transition_out_start, @transition_out_end}
+      )
+
     %{
-      "phx-click-away":
-        JS.hide(
-          to: "##{options_container_id}",
-          transition: {@transition_out_base, @transition_out_start, @transition_out_end}
-        )
+      "phx-click-away": hide,
+      "phx-window-keydown": hide,
+      "phx-key": "Escape"
     }
   end
 

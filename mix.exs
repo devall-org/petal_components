@@ -2,7 +2,7 @@ defmodule PetalComponents.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/petalframework/petal_components"
-  @version "1.9.3"
+  @version "2.0.0"
 
   def project do
     [
@@ -43,9 +43,9 @@ defmodule PetalComponents.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:a11y_audit, "~> 0.1.0", only: :test},
+      {:a11y_audit, "~> 0.2.0", only: :test},
       {:phoenix_playground, "~> 0.1.4", only: [:dev, :test]},
-      {:websock_adapter, "~> 0.5.6"},
+      {:websock_adapter, "~> 0.5.7"},
       {:wallaby, "~> 0.30.9", runtime: false, only: :test},
       {:phoenix, "~> 1.7"},
       {:phoenix_live_view, "~> 0.20"},
@@ -56,7 +56,13 @@ defmodule PetalComponents.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.10", only: :test},
-      {:heroicons, "~> 0.5.3"}
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.5",
+       app: false,
+       compile: false,
+       sparse: "optimized",
+       only: [:dev, :test]}
     ]
   end
 
