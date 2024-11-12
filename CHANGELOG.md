@@ -1,4 +1,30 @@
 # Changelog
+### 2.0.6 - 2024-09-26 04:23:16
+
+- Items center correctly for the Icon Button by @mitkins in https://github.com/petalframework/petal_components/pull/352
+
+### 2.0.5 - 2024-09-25 23:42:23
+
+- implement button_group/1 component by @tylerbarker in https://github.com/petalframework/petal_components/pull/351
+
+### 2.0.4 - 2024-09-23 04:31:51
+
+- Add skeleton css classes to default css to allow for configurability
+
+### 2.0.3 - 2024-09-20 23:45:16
+
+- Fixed margin and dark mode for Avatar placeholder
+
+### 2.0.2 - 2024-09-20 04:06:05
+
+- Fixed: heroicon pattern matching is based on deps folder - rather than dependencies listed for petal_components 
+- Improved error messages for incorrect heroicon names
+
+### 2.0.1 - 2024-09-20 01:48:10
+
+- Ensure css transitions don't cause flaky tests
+- Remove text placeholder from image skeleton to match video skeleton
+
 ### 2.0.0 - 2024-09-17 06:59:11
 
 - a11y improvements by @tylerbarker in https://github.com/petalframework/petal_components/pull/331
