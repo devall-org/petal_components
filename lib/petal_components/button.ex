@@ -116,7 +116,10 @@ defmodule PetalComponents.Button do
       disabled={@disabled}
       {@rest}
     >
-      <div class={@tooltip && "relative group/pc-icon-button flex flex-col items-center"}>
+      <span class={[
+        "pc-icon-button__inner",
+        @tooltip && "group/pc-icon-button pc-icon-button__inner--tooltip"
+      ]}>
         <%= if @loading do %>
           <Loading.spinner show={true} size_class={"pc-icon-button-spinner--#{@size}"} />
         <% else %>
@@ -129,7 +132,7 @@ defmodule PetalComponents.Button do
             <div class="pc-icon-button__tooltip__arrow"></div>
           </div>
         <% end %>
-      </div>
+      </span>
     </Link.a>
     """
   end

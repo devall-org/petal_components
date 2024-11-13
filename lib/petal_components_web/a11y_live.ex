@@ -25,6 +25,7 @@ defmodule PetalComponentsWeb.A11yLive do
            icon: "hero-key"
          }
        ],
+       group_size: "lg",
        current_page: :current_page,
        sidebar_title: "blah",
        posts: [
@@ -52,11 +53,17 @@ defmodule PetalComponentsWeb.A11yLive do
     <script defer src="https://cdn.tailwindcss.com">
     </script>
     <style type="text/css">
+      /* css transitions can cause flaky a11y tests */
+      .env-test {
+        *, *::before, *::after {
+          transition: unset !important;
+        }
+      }
       svg {
         height: 1em; width: 1em;
       }
     </style>
-    <main role="main">
+    <main role="main" class="env-test">
       <.h1>Petal Components A11y Audit</.h1>
       <.h2>Heading 2</.h2>
       <.h3>Heading 3</.h3>
@@ -106,6 +113,20 @@ defmodule PetalComponentsWeb.A11yLive do
       />
 
       <.button label="Press me" phx-click="click_event" />
+
+      <.button_group aria_label="My options" size={@group_size}>
+        <:button label="XS" phx-click="change_size" phx-value-size="xs" />
+        <:button label="SM" kind="link" patch="/app/orgs" />
+        <:button label="MD" phx-click="change_size" phx-value-size="md" />
+        <:button phx-click="change_size" phx-value-size="lg">LG</:button>
+        <:button phx-click="change_size" phx-value-size="xl">XL</:button>
+      </.button_group>
+
+      <.button_group aria_label="My links" size="md">
+        <:button kind="link" patch="/path-one">Link 1</:button>
+        <:button kind="link" patch="/path-two">Link 2</:button>
+        <:button label="Link 3" kind="link" navigate="/other" />
+      </.button_group>
 
       <.card>
         <.card_content category="Article" heading="Enhance your Phoenix development">
