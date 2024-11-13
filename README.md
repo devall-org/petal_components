@@ -22,9 +22,6 @@
   <a href="https://opensource.org/licenses/MIT" alt="MIT">
     <img src="https://img.shields.io/badge/license-MIT-green" />
   </a>
-  <a href="https://codecov.io/gh/petalframework/petal_components" >
-    <img src="https://codecov.io/gh/petalframework/petal_components/branch/main/graph/badge.svg?token=47KQGJOT1G"/>
-  </a>
 </p>
 
 <p align="center">
@@ -97,7 +94,7 @@ We’ve released an [official Figma UI kit for Petal](https://www.figma.com/comm
 - [x] change color
 - [x] loading state (with spinner)
 - [x] filled vs outline
-- [ ] button group
+- [x] button group
 
 ### Misc
 - [x] menu dropdown

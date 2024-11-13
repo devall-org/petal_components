@@ -1,5 +1,6 @@
 defmodule PetalComponents.Field do
   use Phoenix.Component
+  import PetalComponents.Icon
 
   @doc """
   Renders an input with label and error messages. If you just want an input, check out input.ex
@@ -32,8 +33,27 @@ defmodule PetalComponents.Field do
     default: "text",
     values:
       ~w(checkbox checkbox-group color date datetime-local email file hidden month number password
-               range radio-group search select switch tel text textarea time url week),
+               range radio-group radio-card search select switch tel text textarea time url week),
     doc: "the type of input"
+
+  attr :size, :string,
+    default: "md",
+    values: ~w(xs sm md lg xl),
+    doc: "the size of the switch (xs, sm, md, lg or xl) or radio card (sm, md or lg)"
+
+  attr :variant, :any, default: "outline", doc: "outline, classic - used by radio-card"
+
+  attr :viewable, :boolean,
+    default: false,
+    doc: "If true, adds a toggle to show/hide the password text"
+
+  attr :copyable, :boolean,
+    default: false,
+    doc: "If true, adds a copy button to the field and disables the input"
+
+  attr :clearable, :boolean,
+    default: false,
+    doc: "If true, adds a clear button to clear the field value"
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -170,18 +190,23 @@ defmodule PetalComponents.Field do
 
   def field(%{type: "switch", value: value} = assigns) do
     assigns =
-      assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
+      assigns
+      |> assign_new(:checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label
+        required={@required}
+        for={@id}
+        class={[@required && "pc-label--required", @label_class]}
+      >
         <%= @label %>
       </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
         <input type="hidden" name={@name} value="false" />
         <div class="flex gap-x-2">
           <p :if={@off_message}><%= @off_message %></p>
-          <label class="pc-switch">
+          <label class={["pc-switch", "pc-switch--#{@size}"]}>
             <input
               type="checkbox"
               id={@id}
@@ -193,8 +218,8 @@ defmodule PetalComponents.Field do
               {@rest}
             />
 
-            <span class="pc-switch__fake-input"></span>
-            <span class="pc-switch__fake-input-bg"></span>
+            <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
+            <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
           </label>
           <p :if={@on_message}><%= @on_message %></p>
         </div>
@@ -309,6 +334,66 @@ defmodule PetalComponents.Field do
     """
   end
 
+  def field(%{type: "radio-card"} = assigns) do
+    assigns =
+      assigns
+      |> assign_new(:checked, fn -> nil end)
+      |> assign_new(:options, fn -> [] end)
+      |> assign_new(:group_layout, fn -> "row" end)
+      |> assign_new(:id_prefix, fn -> assigns.id || assigns.name || "radio_card" end)
+
+    ~H"""
+    <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <.field_label required={@required} class={@label_class}>
+        <%= @label %>
+      </.field_label>
+      <div class={[
+        "pc-radio-card-group",
+        "pc-radio-card-group--#{@group_layout}",
+        @class
+      ]}>
+        <input type="hidden" name={@name} value="" />
+        <%= for option <- @options do %>
+          <label class={[
+            "pc-radio-card",
+            "pc-radio-card--#{@size}",
+            "pc-radio-card--#{@variant}",
+            option[:disabled] && "pc-radio-card--disabled"
+          ]}>
+            <input
+              type="radio"
+              name={@name}
+              id={"#{@id_prefix}_#{option[:value]}"}
+              value={option[:value]}
+              disabled={option[:disabled]}
+              checked={
+                to_string(option[:value]) == to_string(@value) ||
+                  to_string(option[:value]) == to_string(@checked)
+              }
+              class="sr-only pc-radio-card__input"
+              {@rest}
+            />
+            <div class="pc-radio-card__fake-input"></div>
+            <div class="pc-radio-card__content">
+              <div class="pc-radio-card__label"><%= option[:label] %></div>
+              <div :if={option[:description]} class="pc-radio-card__description">
+                <%= option[:description] %>
+              </div>
+            </div>
+          </label>
+        <% end %>
+        <%= if @empty_message && Enum.empty?(@options) do %>
+          <div class="pc-radio-card-group--empty-message">
+            <%= @empty_message %>
+          </div>
+        <% end %>
+      </div>
+      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_help_text help_text={@help_text} />
+    </.field_wrapper>
+    """
+  end
+
   def field(%{type: "hidden"} = assigns) do
     ~H"""
     <input
@@ -322,7 +407,177 @@ defmodule PetalComponents.Field do
     """
   end
 
-  # All other inputs text, datetime-local, url, password, etc. are handled here...
+  def field(%{type: "password", viewable: true} = assigns) do
+    assigns = assign(assigns, class: [assigns.class, get_class_for_type(assigns.type)])
+
+    ~H"""
+    <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <.field_label required={@required} for={@id} class={@label_class}>
+        <%= @label %>
+      </.field_label>
+      <div class="pc-password-field-wrapper" x-data="{ show: false }">
+        <input
+          x-bind:type="show ? 'text' : 'password'"
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[@class, "pc-password-field-input"]}
+          required={@required}
+          {@rest}
+        />
+        <button type="button" class="pc-password-field-toggle-button" @click="show = !show">
+          <span x-show="!show" class="pc-password-field-toggle-icon-container">
+            <.icon name="hero-eye-solid" class="pc-password-field-toggle-icon" />
+          </span>
+          <span x-show="show" class="pc-password-field-toggle-icon-container" style="display: none;">
+            <.icon name="hero-eye-slash-solid" class="pc-password-field-toggle-icon" />
+          </span>
+        </button>
+      </div>
+      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_help_text help_text={@help_text} />
+    </.field_wrapper>
+    """
+  end
+
+  def field(%{type: type, copyable: true} = assigns) when type in ["text", "url", "email"] do
+    assigns = assign(assigns, class: [assigns.class, get_class_for_type(assigns.type)])
+
+    ~H"""
+    <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <!-- Field Label -->
+      <.field_label required={@required} for={@id} class={@label_class}>
+        <%= @label %>
+      </.field_label>
+      <!-- Copyable Field Wrapper -->
+      <div class="pc-copyable-field-wrapper" x-data="{ copied: false }">
+        <!-- Input Field -->
+        <input
+          x-ref="copyInput"
+          type={@type || "text"}
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type || "text", @value)}
+          class={[@class, "pc-copyable-field-input"]}
+          readonly
+          {@rest}
+        />
+        <!-- Copy Button -->
+        <button
+          type="button"
+          class="pc-copyable-field-button"
+          @click="
+          navigator.clipboard.writeText($refs.copyInput.value)
+            .then(() => { copied = true; setTimeout(() => copied = false, 2000); })
+        "
+        >
+          <!-- Copy Icon -->
+          <span x-show="!copied" class="pc-copyable-field-icon-container">
+            <.icon name="hero-clipboard-document-solid" class="pc-copyable-field-icon" />
+          </span>
+          <!-- Copied Icon -->
+          <span x-show="copied" class="pc-copyable-field-icon-container" style="display: none;">
+            <.icon name="hero-clipboard-document-check-solid" class="pc-copyable-field-icon" />
+          </span>
+        </button>
+      </div>
+      <!-- Error Message -->
+      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <!-- Help Text -->
+      <.field_help_text help_text={@help_text} />
+    </.field_wrapper>
+    """
+  end
+
+  def field(%{type: type, clearable: true} = assigns)
+      when type in ["text", "search", "url", "email", "tel"] do
+    assigns = assign(assigns, class: [assigns.class, get_class_for_type(assigns.type)])
+
+    ~H"""
+    <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <!-- Field Label -->
+      <.field_label required={@required} for={@id} class={@label_class}>
+        <%= @label %>
+      </.field_label>
+      <!-- Clearable Field Wrapper -->
+      <div
+        class="pc-clearable-field-wrapper"
+        x-data="{ showClearButton: false }"
+        x-init="showClearButton = $refs.clearInput.value.length > 0"
+      >
+        <!-- Input Field -->
+        <input
+          x-ref="clearInput"
+          type={@type || "text"}
+          name={@name}
+          id={@id}
+          value={@value}
+          class={[@class, "pc-clearable-field-input"]}
+          required={@required}
+          {@rest}
+          x-on:input="showClearButton = $event.target.value.length > 0"
+        />
+        <!-- Clear Button -->
+        <button
+          type="button"
+          class="pc-clearable-field-button"
+          x-show="showClearButton"
+          x-on:click="
+            $refs.clearInput.value = '';
+            showClearButton = false;
+            $refs.clearInput.dispatchEvent(new Event('input'));
+          "
+          style="display: none;"
+          aria-label="Clear input"
+        >
+          <!-- Clear Icon -->
+          <span class="pc-clearable-field-icon-container">
+            <.icon name="hero-x-mark-solid" class="pc-clearable-field-icon" />
+          </span>
+        </button>
+      </div>
+      <!-- Error Message -->
+      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <!-- Help Text -->
+      <.field_help_text help_text={@help_text} />
+    </.field_wrapper>
+    """
+  end
+
+  def field(%{type: type} = assigns)
+      when type in ["date", "datetime-local", "time", "month", "week"] do
+    assigns =
+      assign(assigns,
+        class: [assigns.class, "pc-date-input pc-date-picker-indicator"],
+        icon_name: get_icon_for_type(assigns.type)
+      )
+
+    ~H"""
+    <.field_wrapper errors={@errors} name={@name} class={@wrapper_class}>
+      <.field_label required={@required} for={@id} class={@label_class}>
+        <%= @label %>
+      </.field_label>
+      <div class="pc-date-input-wrapper">
+        <input
+          type={@type}
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={@class}
+          required={@required}
+          {@rest}
+        />
+        <div class="pc-date-input-icon">
+          <.icon name={@icon_name} class="w-5 h-5 text-gray-400" />
+        </div>
+      </div>
+      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_help_text help_text={@help_text} />
+    </.field_wrapper>
+    """
+  end
+
+  # All other inputs (text, url, etc.) are handled here...
   def field(assigns) do
     assigns = assign(assigns, class: [assigns.class, get_class_for_type(assigns.type)])
 
@@ -423,6 +678,12 @@ defmodule PetalComponents.Field do
   defp get_class_for_type("file"), do: "pc-file-input"
   defp get_class_for_type("range"), do: "pc-range-input"
   defp get_class_for_type(_), do: "pc-text-input"
+
+  defp get_icon_for_type("date"), do: "hero-calendar"
+  defp get_icon_for_type("datetime-local"), do: "hero-calendar"
+  defp get_icon_for_type("month"), do: "hero-calendar"
+  defp get_icon_for_type("week"), do: "hero-calendar"
+  defp get_icon_for_type("time"), do: "hero-clock"
 
   defp translate_error({msg, opts}) do
     config_translator = get_translator_from_config()

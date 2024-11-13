@@ -1,4 +1,70 @@
 # Changelog
+### 2.6.0 - 2024-11-12 02:47:23
+
+- Added Marquee component
+- Added review_card
+- add no_margin to p tags
+- add tests and a11y checks pass
+
+### 2.5.2 - 2024-11-01 02:58:45
+
+- style icon better for cross browser support
+
+### 2.5.1 - 2024-10-31 05:48:51
+
+- update stepper with better responsiveness across vertical and horizontal orientations
+- update input to accept clearable, copyable and viewable
+
+### 2.5.0 - 2024-10-30 02:04:14
+
+- New Stepper component
+- New Radio Card field
+- Adds viewable icon to password field and upgrades date and time icons to heroicons for cleaner look and to facilitate dark mode better
+- Adds copyable and clearable functionality to respective fields
+
+### 2.4.3 - 2024-10-24 00:45:20
+
+- bump default switch size to md
+- fix rendering .alert with HTML fails #361
+
+### 2.4.2 - 2024-10-24 00:08:31
+
+- missing w-full and adds test for pc-accordion--ghost
+
+### 2.4.1 - 2024-10-24 00:00:03
+
+- fix, variant classes not passing through correctly
+
+### 2.4.0 - 2024-10-23 04:13:40
+
+- Allow for different switch sizes and fix some error state colors
+
+### 2.3.0 - 2024-10-21 23:37:49
+
+- Provide more variants for alert and badge (soft) to allow better support for dark mode
+- Bump a11y_audit from 0.2.0 to 0.2.1
+
+### 2.2.1 - 2024-10-18 01:12:17
+
+- Fixes slide over opening animation
+
+### 2.2.0 - 2024-10-07 09:55:16
+
+- Update accordion so that you can set a particular item to be open at render
+
+### 2.1.2 - 2024-10-07 01:52:01
+
+- update button_group to support custom bg and border style props
+
+### 2.1.1 - 2024-10-07 01:08:01
+
+- move button_group classes into default css file
+- update button_group classes
+
+### 2.1.0 - 2024-10-02 03:12:09
+
+- Adds new ghost table variant for extremely clean look
+
 ### 2.0.6 - 2024-09-26 04:23:16
 
 - Items center correctly for the Icon Button by @mitkins in https://github.com/petalframework/petal_components/pull/352
