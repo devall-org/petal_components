@@ -501,7 +501,146 @@ defmodule PetalComponents.FieldTest do
     refute html =~ "No options"
   end
 
-  test "field switch" do
+  test "field radio-card" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          class="custom-class"
+          type="radio-card"
+          group_layout="col"
+          field={@form[:plans]}
+          options={[
+            %{label: "Basic Plan", value: "basic"},
+            %{label: "Pro Plan", value: "pro", description: "Most popular choice"}
+          ]}
+        />
+      </.form>
+      """)
+
+    assert html =~ "radio"
+    assert html =~ "user[plans]"
+    assert html =~ "pc-radio-card-group--col"
+    assert html =~ "Basic Plan"
+    assert html =~ "phx-feedback-for"
+    assert html =~ "Pro Plan"
+    refute html =~ " checked "
+    assert html =~ "hidden"
+    assert html =~ "custom-class"
+  end
+
+  test "field radio-card group_layout attr" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field type="radio-card" field={@form[:plans]} />
+      </.form>
+      """)
+
+    assert html =~ "pc-radio-card-group--row"
+  end
+
+  test "field radio-card checked on form field" do
+    assigns = %{form: to_form(%{"plans" => "pro"}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          class="custom-class"
+          type="radio-card"
+          field={@form[:plans]}
+          options={[
+            %{label: "Basic Plan", value: "basic"},
+            %{label: "Pro Plan", value: "pro", description: "Most popular choice"}
+          ]}
+        />
+      </.form>
+      """)
+
+    assert html =~ ~s|value="pro" checked|
+
+    # Test when value is an integer
+    assigns = %{form: to_form(%{"plans" => 2}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          class="custom-class"
+          type="radio-card"
+          field={@form[:plans]}
+          options={[
+            %{label: "Basic Plan", value: "1"},
+            %{label: "Pro Plan", value: "2", description: "Most popular choice"}
+          ]}
+        />
+      </.form>
+      """)
+
+    assert html =~ ~s|value="2" checked|
+  end
+
+  test "field radio-card checked attr" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          class="custom-class"
+          type="radio-card"
+          field={@form[:plans]}
+          checked="pro"
+          options={[
+            %{label: "Basic Plan", value: "basic"},
+            %{label: "Pro Plan", value: "pro", description: "Most popular choice"}
+          ]}
+        />
+      </.form>
+      """)
+
+    assert html =~ ~s|value="pro" checked|
+  end
+
+  test "field radio-card empty options" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field type="radio-card" field={@form[:plans]} empty_message="No options" />
+      </.form>
+      """)
+
+    assert html =~ "No options"
+
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          class="custom-class"
+          type="radio-card"
+          field={@form[:plans]}
+          options={[
+            %{label: "Basic Plan", value: "basic"},
+            %{label: "Pro Plan", value: "pro", description: "Most popular choice"}
+          ]}
+          empty_message="No options"
+        />
+      </.form>
+      """)
+
+    refute html =~ "No options"
+  end
+
+  test "field switch and size" do
     assigns = %{form: to_form(%{}, as: :user)}
 
     html =
@@ -518,6 +657,15 @@ defmodule PetalComponents.FieldTest do
 
     # It includes a hidden field for when the switch is not checked
     assert html =~ ~s|<input type="hidden" name="user[read_terms]" value="false">|
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field type="switch" size="xs" field={@form[:read_terms]} data-extra="true" />
+      </.form>
+      """)
+
+    assert html =~ "pc-switch pc-switch--xs"
   end
 
   test "field radio group" do
@@ -539,6 +687,91 @@ defmodule PetalComponents.FieldTest do
     assert html =~ "user[read_terms]"
     assert html =~ "phx-feedback-for"
     assert html =~ "data-extra"
+  end
+
+  test "field with copyable" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          field={@form[:text]}
+          placeholder="This is just a placeholder"
+          value="https://example.com/invite/your-invite-code"
+          label="Copyable"
+          copyable
+        />
+      </.form>
+      """)
+
+    assert html =~ "<label"
+    assert html =~ "Copyable"
+    assert html =~ "<input"
+    assert html =~ ~s|type="text"|
+    assert html =~ "readonly"
+    assert html =~ ~s|value="https://example.com/invite/your-invite-code"|
+    assert html =~ "pc-copyable-field-button"
+    assert html =~ "clipboard-document-solid"
+    assert html =~ "pc-copyable-field-icon"
+    assert html =~ "x-data"
+    assert html =~ ~s|x-ref="copyInput"|
+    assert html =~ "@click"
+    assert html =~ "x-show"
+    assert html =~ "phx-feedback-for"
+  end
+
+  test "field with viewable" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field
+          type="password"
+          field={@form[:password]}
+          label="Viewable"
+          placeholder="Placeholder"
+          viewable
+        />
+      </.form>
+      """)
+
+    assert html =~ "<label"
+    assert html =~ "Viewable"
+    assert html =~ "<input"
+    assert html =~ "x-bind:type"
+    assert html =~ "x-data"
+    assert html =~ "@click"
+    assert html =~ "x-show"
+    assert html =~ "pc-password-field-toggle-button"
+    assert html =~ "hero-eye-solid"
+    assert html =~ "pc-password-field-toggle-icon"
+    assert html =~ "phx-feedback-for"
+  end
+
+  test "field with clearable" do
+    assigns = %{form: to_form(%{}, as: :user)}
+
+    html =
+      rendered_to_string(~H"""
+      <.form for={@form}>
+        <.field field={@form[:text]} placeholder="Enter text" label="Clearable" type="text" clearable />
+      </.form>
+      """)
+
+    assert html =~ "<label"
+    assert html =~ "Clearable"
+    assert html =~ "<input"
+    assert html =~ ~s|type="text"|
+    assert html =~ "pc-clearable-field-button"
+    assert html =~ "hero-x-mark-solid"
+    assert html =~ "pc-clearable-field-icon"
+    assert html =~ "x-data"
+    assert html =~ "x-on:input"
+    assert html =~ "x-on:click"
+    assert html =~ "x-show"
+    assert html =~ "phx-feedback-for"
   end
 
   test "field_help_text" do

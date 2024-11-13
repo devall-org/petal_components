@@ -11,6 +11,7 @@ defmodule PetalComponentsWeb.A11yLive do
   """
   use Phoenix.LiveView, global_prefixes: ~w(x-)
   use PetalComponents
+  alias Phoenix.LiveView.JS
 
   def mount(_params, _session, socket) do
     {:ok,
@@ -184,11 +185,69 @@ defmodule PetalComponentsWeb.A11yLive do
 
       <.spinner show={true} />
 
+      <.stepper
+        steps={[
+          %{
+            name: "Account Details",
+            description: "Basic information",
+            complete?: true,
+            active?: true,
+            on_click: JS.push("navigate", value: %{target_index: 0})
+          },
+          %{
+            name: "Preferences",
+            description: "Set preferences",
+            complete?: true,
+            active?: false,
+            on_click: JS.push("navigate", value: %{target_index: 1})
+          },
+          %{
+            name: "Confirmation",
+            description: "Review and confirm",
+            complete?: false,
+            active?: false,
+            on_click: JS.push("navigate", value: %{target_index: 2})
+          }
+        ]}
+        orientation="horizontal"
+        size="sm"
+      />
+
       <.vertical_menu
         menu_items={@main_menu_items}
         current_page={@current_page}
         title={@sidebar_title}
       />
+
+      <.marquee pause_on_hover repeat={3}>
+        <%= for review <- [
+    %{
+      name: "Anne",
+      username: "@anne",
+      body: "I've never seen anything like this before. It's amazing.",
+      img: "https://res.cloudinary.com/wickedsites/image/upload/v1604268092/unnamed_sagz0l.jpg"
+    },
+    %{
+      name: "Jill",
+      username: "@jill",
+      body: "I don't know what to say. I'm speechless. This is amazing.",
+      img: "https://res.cloudinary.com/wickedsites/image/upload/v1636595188/dummy_data/avatar_1_lc8plf.png"
+    },
+    %{
+      name: "John",
+      username: "@john",
+      body: "I'm at a loss for words. This is amazing. I love it.",
+      img: "https://res.cloudinary.com/wickedsites/image/upload/v1636595188/dummy_data/avatar_2_jhs6ww.png"
+    }
+    ] do %>
+          <.review_card
+            name={review.name}
+            username={review.username}
+            body={review.body}
+            img={review.img}
+          />
+        <% end %>
+      </.marquee>
 
       <.modal max_width="sm" title="Modal">
         <div class="gap-5 text-sm">
