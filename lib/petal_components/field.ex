@@ -258,7 +258,8 @@ defmodule PetalComponents.Field do
         @class
       ]}>
         <%= for {label, value} <- @options do %>
-          <label class="pc-checkbox-label">
+          <% disabled = value in @disabled_options %>
+          <label class={["pc-checkbox-label", disabled && "pc-checkbox-label--disabled"]}>
             <input
               type="checkbox"
               name={@name <> "[]"}
@@ -268,7 +269,7 @@ defmodule PetalComponents.Field do
               checked={to_string(value) in @checked}
               hidden_input={false}
               class="pc-checkbox"
-              disabled={value in @disabled_options}
+              disabled={disabled}
               {@rest}
             />
             <div>
@@ -305,7 +306,8 @@ defmodule PetalComponents.Field do
       ]}>
         <input type="hidden" name={@name} value="" />
         <%= for {label, value} <- @options do %>
-          <label class="pc-checkbox-label">
+          <% disabled = value in @disabled_options %>
+          <label class={["pc-checkbox-label", disabled && "pc-checkbox-label--disabled"]}>
             <input
               type="radio"
               name={@name}
@@ -314,6 +316,7 @@ defmodule PetalComponents.Field do
                 to_string(value) == to_string(@value) || to_string(value) == to_string(@checked)
               }
               class="pc-radio"
+              disabled={disabled}
               {@rest}
             />
             <div>
