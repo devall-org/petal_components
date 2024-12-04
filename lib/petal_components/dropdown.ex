@@ -16,6 +16,10 @@ defmodule PetalComponents.Dropdown do
   attr :label, :string, default: nil, doc: "labels your dropdown option"
   attr :class, :any, default: nil, doc: "any extra CSS class for the parent container"
 
+  attr :trigger_class, :string,
+    default: nil,
+    doc: "additional classes for the trigger button"
+
   attr :menu_items_wrapper_class, :any,
     default: nil,
     doc: "any extra CSS class for menu item wrapper container"
@@ -60,7 +64,8 @@ defmodule PetalComponents.Dropdown do
           type="button"
           class={[
             trigger_button_classes(@label, @trigger_element),
-            @disabled && "pc-button--disabled"
+            @disabled && "pc-button--disabled",
+            @trigger_class
           ]}
           {js_attributes("button", @js_lib, @options_container_id)}
           aria-haspopup="true"
@@ -70,7 +75,7 @@ defmodule PetalComponents.Dropdown do
 
           <%= if @label do %>
             <%= @label %>
-            <.icon name="hero-chevron-down-solid" class="h-5 w-5 pc-dropdown__chevron" />
+            <.icon name="hero-chevron-down-solid" class="w-5 h-5 pc-dropdown__chevron" />
           <% end %>
 
           <%= if @trigger_element do %>
@@ -78,7 +83,7 @@ defmodule PetalComponents.Dropdown do
           <% end %>
 
           <%= if !@label && @trigger_element == [] do %>
-            <.icon name="hero-ellipsis-vertical-solid" class="h-5 w-5pc-dropdown__ellipsis" />
+            <.icon name="hero-ellipsis-vertical-solid" class="w-5 h-5 pc-dropdown__ellipsis" />
           <% end %>
         </button>
       </div>

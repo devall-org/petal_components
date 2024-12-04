@@ -78,6 +78,11 @@ defmodule PetalComponents.Form do
   )
 
   attr(:wrapper_classes, :string, default: "pc-form-field-wrapper", doc: "CSS class for wrapper")
+
+  attr :no_margin, :boolean,
+    default: false,
+    doc: "removes the bottom margin from the field wrapper"
+
   attr :rest, :global, include: @form_attrs
 
   @doc "Use this when you want to include the label and some margin."
@@ -97,6 +102,17 @@ defmodule PetalComponents.Form do
           nil
         end
       end)
+      |> assign(
+        :wrapper_classes,
+        if assigns[:wrapper_classes] do
+          assigns.wrapper_classes
+        else
+          [
+            "pc-form-field-wrapper",
+            assigns.no_margin && "pc-form-field-wrapper--no-margin"
+          ]
+        end
+      )
 
     ~H"""
     <div class={@wrapper_classes} phx-feedback-for={Phoenix.HTML.Form.input_name(@form, @field)}>

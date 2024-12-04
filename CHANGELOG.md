@@ -1,4 +1,29 @@
 # Changelog
+### 2.7.3 - 2024-11-29 02:37:33
+
+- fix icon backgrounds on disabled input (finally fixed, whoops)
+
+### 2.7.2 - 2024-11-29 02:26:37
+
+- fix icon backgrounds on disabled input
+
+### 2.7.1 - 2024-11-27 21:34:32
+
+- Add trigger_class prop to target dropdown_with_label base classes
+- Change default dropdown_with_label base classes for dark mode
+
+### 2.7.0 - 2024-11-27 07:50:55
+
+- Add ghost and light color variants to buttons
+- Adds radius opts to buttons and icon_buttons
+- Adds no_margin prop to field_wrapper
+- Fixes custom datetime and time icons bg color on error state
+
+### 2.6.1 - 2024-11-18 02:16:57
+
+- Squashes button_group warnings
+- Fix the date inputs icon overlap in safari
+
 ### 2.6.0 - 2024-11-12 02:47:23
 
 - Added Marquee component
