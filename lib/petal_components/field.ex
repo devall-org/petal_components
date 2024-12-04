@@ -573,7 +573,7 @@ defmodule PetalComponents.Field do
           {@rest}
         />
         <div class="pc-date-input-icon">
-          <.icon name={@icon_name} class="w-5 h-5 text-gray-400" />
+          <.icon :if={@icon_name} name={@icon_name} class="w-5 h-5 text-gray-400" />
         </div>
       </div>
       <.field_error :for={msg <- @errors}><%= msg %></.field_error>
@@ -693,7 +693,8 @@ defmodule PetalComponents.Field do
   defp get_icon_for_type("datetime-local"), do: "hero-calendar"
   defp get_icon_for_type("month"), do: "hero-calendar"
   defp get_icon_for_type("week"), do: "hero-calendar"
-  defp get_icon_for_type("time"), do: "hero-clock"
+  defp get_icon_for_type("time"), do: nil
+  # defp get_icon_for_type("time"), do: "hero-clock"
 
   defp translate_error({msg, opts}) do
     config_translator = get_translator_from_config()
