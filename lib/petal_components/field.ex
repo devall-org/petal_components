@@ -689,12 +689,12 @@ defmodule PetalComponents.Field do
   defp get_class_for_type("range"), do: "pc-range-input"
   defp get_class_for_type(_), do: "pc-text-input"
 
-  defp get_icon_for_type("date"), do: "hero-calendar"
-  defp get_icon_for_type("datetime-local"), do: "hero-calendar"
-  defp get_icon_for_type("month"), do: "hero-calendar"
-  defp get_icon_for_type("week"), do: "hero-calendar"
-  defp get_icon_for_type("time"), do: nil
+  # defp get_icon_for_type("date"), do: "hero-calendar"
+  # defp get_icon_for_type("datetime-local"), do: "hero-calendar"
+  # defp get_icon_for_type("month"), do: "hero-calendar"
+  # defp get_icon_for_type("week"), do: "hero-calendar"
   # defp get_icon_for_type("time"), do: "hero-clock"
+  defp get_icon_for_type(_), do: nil
 
   defp translate_error({msg, opts}) do
     config_translator = get_translator_from_config()
