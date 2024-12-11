@@ -59,15 +59,15 @@ defmodule PetalComponents.Input do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <select id={@id} name={@name} class={[@class, "pc-text-input"]} multiple={@multiple} {@rest}>
-      <option :if={@prompt} value=""><%= @prompt %></option>
-      <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+      <option :if={@prompt} value="">{@prompt}</option>
+      {Phoenix.HTML.Form.options_for_select(@options, @value)}
     </select>
     """
   end
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <textarea id={@id} name={@name} class={[@class, "pc-text-input"]} {@rest}><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+    <textarea id={@id} name={@name} class={[@class, "pc-text-input"]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
     """
   end
 

@@ -1,4 +1,13 @@
 # Changelog
+### 2.8.0 - 2024-12-11 00:28:11
+
+- Update for forms V1 and V2 to support LiveView 1.0 - https://github.com/petalframework/petal_components/pull/382 (thanks @joepstender for your contribution
+
+### 2.7.4 - 2024-12-04 20:57:07
+
+- Bumped LiveView to 1.0
+- Bumped other deps
+
 ### 2.7.3 - 2024-11-29 02:37:33
 
 - fix icon backgrounds on disabled input (finally fixed, whoops)

@@ -105,9 +105,11 @@ defmodule PetalComponents.Field do
   slot :inner_block
 
   def field(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+    errors = if used_input?(field), do: field.errors, else: []
+
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
-    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:errors, Enum.map(errors, &translate_error(&1)))
     |> assign_new(:name, fn ->
       if assigns.multiple && assigns.type not in ["checkbox-group", "radio-group"],
         do: field.name <> "[]",
@@ -137,11 +139,11 @@ defmodule PetalComponents.Field do
           {@rest}
         />
         <div class={[@required && "pc-label--required"]}>
-          <%= @label %>
-          <%= render_slot(@inner_block) %>
+          {@label}
+          {render_slot(@inner_block)}
         </div>
       </label>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -151,7 +153,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <select
         id={@id}
@@ -161,10 +163,10 @@ defmodule PetalComponents.Field do
         required={@required}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @selected || @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @selected || @value)}
       </select>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -174,7 +176,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <textarea
         id={@id}
@@ -184,7 +186,7 @@ defmodule PetalComponents.Field do
         required={@required}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -202,12 +204,12 @@ defmodule PetalComponents.Field do
         for={@id}
         class={[@required && "pc-label--required", @label_class]}
       >
-        <%= @label %>
+        {@label}
       </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
         <input type="hidden" name={@name} value="false" />
         <div class="flex gap-x-2">
-          <p :if={@off_message}><%= @off_message %></p>
+          <p :if={@off_message}>{@off_message}</p>
           <label class={["pc-switch", "pc-switch--#{@size}"]}>
             <input
               type="checkbox"
@@ -219,15 +221,14 @@ defmodule PetalComponents.Field do
               class={["sr-only peer", @class]}
               {@rest}
             />
-
             <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
             <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
           </label>
-          <p :if={@on_message}><%= @on_message %></p>
+          <p :if={@on_message}>{@on_message}</p>
         </div>
-        <div><%= @prompt %></div>
+        <div>{@prompt}</div>
       </label>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -250,7 +251,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <input type="hidden" name={@name <> "[]"} value="" />
       <div class={[
@@ -275,18 +276,18 @@ defmodule PetalComponents.Field do
               {@rest}
             />
             <div>
-              <%= label %>
+              {label}
             </div>
           </label>
         <% end %>
 
         <%= if @empty_message && Enum.empty?(@options) do %>
           <div class="pc-checkbox-group--empty-message">
-            <%= @empty_message %>
+            {@empty_message}
           </div>
         <% end %>
       </div>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -298,7 +299,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <div class={[
         "pc-radio-group",
@@ -322,18 +323,18 @@ defmodule PetalComponents.Field do
               {@rest}
             />
             <div>
-              <%= label %>
+              {label}
             </div>
           </label>
         <% end %>
 
         <%= if @empty_message && Enum.empty?(@options) do %>
           <div class="pc-checkbox-group--empty-message">
-            <%= @empty_message %>
+            {@empty_message}
           </div>
         <% end %>
       </div>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -350,7 +351,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <div class={[
         "pc-radio-card-group",
@@ -380,20 +381,20 @@ defmodule PetalComponents.Field do
             />
             <div class="pc-radio-card__fake-input"></div>
             <div class="pc-radio-card__content">
-              <div class="pc-radio-card__label"><%= option[:label] %></div>
+              <div class="pc-radio-card__label">{option[:label]}</div>
               <div :if={option[:description]} class="pc-radio-card__description">
-                <%= option[:description] %>
+                {option[:description]}
               </div>
             </div>
           </label>
         <% end %>
         <%= if @empty_message && Enum.empty?(@options) do %>
           <div class="pc-radio-card-group--empty-message">
-            <%= @empty_message %>
+            {@empty_message}
           </div>
         <% end %>
       </div>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -418,7 +419,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <div class="pc-password-field-wrapper" x-data="{ show: false }">
         <input
@@ -439,7 +440,7 @@ defmodule PetalComponents.Field do
           </span>
         </button>
       </div>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -452,7 +453,7 @@ defmodule PetalComponents.Field do
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <!-- Field Label -->
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <!-- Copyable Field Wrapper -->
       <div class="pc-copyable-field-wrapper" x-data="{ copied: false }">
@@ -487,7 +488,7 @@ defmodule PetalComponents.Field do
         </button>
       </div>
       <!-- Error Message -->
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <!-- Help Text -->
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
@@ -502,7 +503,7 @@ defmodule PetalComponents.Field do
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <!-- Field Label -->
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <!-- Clearable Field Wrapper -->
       <div
@@ -542,7 +543,7 @@ defmodule PetalComponents.Field do
         </button>
       </div>
       <!-- Error Message -->
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <!-- Help Text -->
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
@@ -560,7 +561,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <div class="pc-date-input-wrapper">
         <input
@@ -576,7 +577,7 @@ defmodule PetalComponents.Field do
           <.icon :if={@icon_name} name={@icon_name} class="w-5 h-5 text-gray-400" />
         </div>
       </div>
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -589,7 +590,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label required={@required} for={@id} class={@label_class}>
-        <%= @label %>
+        {@label}
       </.field_label>
       <input
         type={@type}
@@ -600,7 +601,7 @@ defmodule PetalComponents.Field do
         required={@required}
         {@rest}
       />
-      <.field_error :for={msg <- @errors}><%= msg %></.field_error>
+      <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
     </.field_wrapper>
     """
@@ -619,7 +620,6 @@ defmodule PetalComponents.Field do
   def field_wrapper(assigns) do
     ~H"""
     <div
-      phx-feedback-for={@name}
       {@rest}
       class={[
         @class,
@@ -628,7 +628,7 @@ defmodule PetalComponents.Field do
         @errors != [] && "pc-form-field-wrapper--error"
       ]}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -646,11 +646,11 @@ defmodule PetalComponents.Field do
     ~H"""
     <%= if @for do %>
       <label for={@for} class={["pc-label", @class, @required && "pc-label--required"]} {@rest}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </label>
     <% else %>
       <span class={["pc-label", @class, @required && "pc-label--required"]} {@rest}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </span>
     <% end %>
     """
@@ -664,7 +664,7 @@ defmodule PetalComponents.Field do
   def field_error(assigns) do
     ~H"""
     <p class="pc-form-field-error">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -677,7 +677,7 @@ defmodule PetalComponents.Field do
   def field_help_text(assigns) do
     ~H"""
     <div :if={render_slot(@inner_block) || @help_text} class={["pc-form-help-text", @class]} {@rest}>
-      <%= render_slot(@inner_block) || @help_text %>
+      {render_slot(@inner_block) || @help_text}
     </div>
     """
   end
