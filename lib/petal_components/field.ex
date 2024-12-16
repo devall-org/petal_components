@@ -554,7 +554,8 @@ defmodule PetalComponents.Field do
       when type in ["date", "datetime-local", "time", "month", "week"] do
     assigns =
       assign(assigns,
-        class: [assigns.class, "pc-date-input pc-date-picker-indicator"],
+        # class: [assigns.class, "pc-date-input pc-date-picker-indicator"],
+        class: [assigns.class, "pc-date-input"],
         icon_name: get_icon_for_type(assigns.type)
       )
 
