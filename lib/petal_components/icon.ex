@@ -4,7 +4,11 @@ defmodule PetalComponents.Icon do
   require Logger
 
   deps_path = Mix.Project.deps_path()
-  heroicons_path = Path.join(deps_path, "heroicons/optimized")
+
+  heroicons_rel_path =
+    Application.compile_env(:petal_components, :heroicons_rel_path, "heroicons/optimized")
+
+  heroicons_path = Path.join(deps_path, heroicons_rel_path)
 
   # Heroicons aren't available when pushing to hex
   if !File.dir?(heroicons_path) do

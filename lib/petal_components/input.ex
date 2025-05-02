@@ -67,7 +67,7 @@ defmodule PetalComponents.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <textarea id={@id} name={@name} class={[@class, "pc-text-input"]} {@rest}><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+    <textarea id={@id} name={@name} class={[@class, "pc-text-input"]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
     """
   end
 

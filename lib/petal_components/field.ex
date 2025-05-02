@@ -66,7 +66,7 @@ defmodule PetalComponents.Field do
       "a list of errors to display. If not passed, it will be generated automatically from the field. Format is a list of strings."
 
   attr :checked, :any, doc: "the checked flag for checkboxes and checkbox groups"
-  attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
+  attr :prompt, :string, default: nil, doc: "the prompt for select/switch inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :disabled_options, :list, default: [], doc: "the options to disable in a checkbox group"
@@ -93,11 +93,16 @@ defmodule PetalComponents.Field do
     default: false,
     doc: "is this field required? is passed to the input and adds an asterisk next to the label"
 
+  attr :on_message, :string, default: nil, doc: "message to display when switch is on"
+  attr :off_message, :string, default: nil, doc: "message to display when switch is off"
+
   attr :rest, :global,
     include:
       ~w(autocomplete autocorrect autocapitalize disabled form max maxlength min minlength list
     pattern placeholder readonly required size step value name multiple prompt default year month day hour minute second builder options layout cols rows wrap checked accept),
     doc: "All other props go on the input"
+
+  slot :inner_block
 
   def field(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     errors = if used_input?(field), do: field.errors, else: []
@@ -135,6 +140,7 @@ defmodule PetalComponents.Field do
         />
         <div class={[@required && "pc-label--required"]}>
           {@label}
+          {render_slot(@inner_block)}
         </div>
       </label>
       <.field_error :for={msg <- @errors}>{msg}</.field_error>
@@ -193,24 +199,34 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
+      <.field_label
+        required={@required}
+        for={@id}
+        class={[@required && "pc-label--required", @label_class]}
+      >
+        {@label}
+      </.field_label>
       <label class={["pc-checkbox-label", @label_class]}>
         <input type="hidden" name={@name} value="false" />
-        <label class={["pc-switch", "pc-switch--#{@size}"]}>
-          <input
-            type="checkbox"
-            id={@id}
-            name={@name}
-            value="true"
-            checked={@checked}
-            required={@required}
-            class={["sr-only peer", @class]}
-            {@rest}
-          />
-
-          <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
-          <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
-        </label>
-        <div class={[@required && "pc-label--required"]}>{@label}</div>
+        <div class="flex gap-x-2">
+          <p :if={@off_message}>{@off_message}</p>
+          <label class={["pc-switch", "pc-switch--#{@size}"]}>
+            <input
+              type="checkbox"
+              id={@id}
+              name={@name}
+              value="true"
+              checked={@checked}
+              required={@required}
+              class={["sr-only peer", @class]}
+              {@rest}
+            />
+            <span class={["pc-switch__fake-input", "pc-switch__fake-input--#{@size}"]}></span>
+            <span class={["pc-switch__fake-input-bg", "pc-switch__fake-input-bg--#{@size}"]}></span>
+          </label>
+          <p :if={@on_message}>{@on_message}</p>
+        </div>
+        <div>{@prompt}</div>
       </label>
       <.field_error :for={msg <- @errors}>{msg}</.field_error>
       <.field_help_text help_text={@help_text} />
@@ -245,7 +261,8 @@ defmodule PetalComponents.Field do
         @class
       ]}>
         <%= for {label, value} <- @options do %>
-          <label class="pc-checkbox-label">
+          <% disabled = value in @disabled_options %>
+          <label class={["pc-checkbox-label", disabled && "pc-checkbox-label--disabled"]}>
             <input
               type="checkbox"
               name={@name <> "[]"}
@@ -255,7 +272,7 @@ defmodule PetalComponents.Field do
               checked={to_string(value) in @checked}
               hidden_input={false}
               class="pc-checkbox"
-              disabled={value in @disabled_options}
+              disabled={disabled}
               {@rest}
             />
             <div>
@@ -292,7 +309,8 @@ defmodule PetalComponents.Field do
       ]}>
         <input type="hidden" name={@name} value="" />
         <%= for {label, value} <- @options do %>
-          <label class="pc-checkbox-label">
+          <% disabled = value in @disabled_options %>
+          <label class={["pc-checkbox-label", disabled && "pc-checkbox-label--disabled"]}>
             <input
               type="radio"
               name={@name}
@@ -301,6 +319,7 @@ defmodule PetalComponents.Field do
                 to_string(value) == to_string(@value) || to_string(value) == to_string(@checked)
               }
               class="pc-radio"
+              disabled={disabled}
               {@rest}
             />
             <div>
@@ -535,7 +554,8 @@ defmodule PetalComponents.Field do
       when type in ["date", "datetime-local", "time", "month", "week"] do
     assigns =
       assign(assigns,
-        class: [assigns.class, "pc-date-input pc-date-picker-indicator"],
+        # class: [assigns.class, "pc-date-input pc-date-picker-indicator"],
+        class: [assigns.class, "pc-date-input"],
         icon_name: get_icon_for_type(assigns.type)
       )
 
@@ -555,7 +575,7 @@ defmodule PetalComponents.Field do
           {@rest}
         />
         <div class="pc-date-input-icon">
-          <.icon name={@icon_name} class="w-5 h-5 text-gray-400" />
+          <.icon :if={@icon_name} name={@icon_name} class="w-5 h-5 text-gray-400" />
         </div>
       </div>
       <.field_error :for={msg <- @errors}>{msg}</.field_error>
@@ -670,11 +690,12 @@ defmodule PetalComponents.Field do
   defp get_class_for_type("range"), do: "pc-range-input"
   defp get_class_for_type(_), do: "pc-text-input"
 
-  defp get_icon_for_type("date"), do: "hero-calendar"
-  defp get_icon_for_type("datetime-local"), do: "hero-calendar"
-  defp get_icon_for_type("month"), do: "hero-calendar"
-  defp get_icon_for_type("week"), do: "hero-calendar"
-  defp get_icon_for_type("time"), do: "hero-clock"
+  # defp get_icon_for_type("date"), do: "hero-calendar"
+  # defp get_icon_for_type("datetime-local"), do: "hero-calendar"
+  # defp get_icon_for_type("month"), do: "hero-calendar"
+  # defp get_icon_for_type("week"), do: "hero-calendar"
+  # defp get_icon_for_type("time"), do: "hero-clock"
+  defp get_icon_for_type(_), do: nil
 
   defp translate_error({msg, opts}) do
     config_translator = get_translator_from_config()

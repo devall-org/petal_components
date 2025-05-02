@@ -30,6 +30,7 @@ defmodule PetalComponents.Dropdown do
     doc: "javascript library used for toggling"
 
   attr :placement, :string, default: "left", values: ["left", "right"]
+  attr :disabled, :boolean, default: false
   attr :rest, :global
 
   slot :trigger_element
@@ -63,10 +64,12 @@ defmodule PetalComponents.Dropdown do
           type="button"
           class={[
             trigger_button_classes(@label, @trigger_element),
+            @disabled && "pc-button--disabled",
             @trigger_class
           ]}
           {js_attributes("button", @js_lib, @options_container_id)}
           aria-haspopup="true"
+          disabled={@disabled}
         >
           <span class="sr-only">Open options</span>
 
