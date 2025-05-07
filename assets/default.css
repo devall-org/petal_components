@@ -1,4 +1,4 @@
-@import "devall.css";
+@import "./devall.css";
 
 @layer components {
   /* Container */
