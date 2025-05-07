@@ -2,8 +2,6 @@ defmodule PetalComponents.SlideOver do
   use Phoenix.Component
   alias Phoenix.LiveView.JS
 
-  attr :id, :string, default: "slide-over"
-
   attr(:origin, :string,
     default: "right",
     values: ["left", "right", "top", "bottom"],
@@ -43,12 +41,12 @@ defmodule PetalComponents.SlideOver do
     ~H"""
     <div
       {@rest}
-      phx-mounted={!@hide && show_slide_over(@origin, @id)}
-      phx-remove={hide_slide_over(@origin, @id, @close_slide_over_target)}
+      phx-mounted={!@hide && show_slide_over(@origin)}
+      phx-remove={hide_slide_over(@origin, @close_slide_over_target)}
       class="hidden pc-slide-over"
-      id={@id}
+      id="slide-over"
     >
-      <div id={"#{@id}-overlay"} class="hidden pc-slideover__overlay" aria-hidden="true"></div>
+      <div id="slide-over-overlay" class="pc-slideover__overlay" aria-hidden="true"></div>
 
       <div
         class={["pc-slideover__wrapper", get_margin_classes(@origin), @class]}
@@ -57,26 +55,22 @@ defmodule PetalComponents.SlideOver do
         aria-modal="true"
       >
         <div
-          id={"#{@id}-content"}
+          id="slide-over-content"
           class={get_classes(@max_width, @origin, @class)}
-          phx-click-away={
-            @close_on_click_away && hide_slide_over(@origin, @id, @close_slide_over_target)
-          }
-          phx-window-keydown={
-            @close_on_escape && hide_slide_over(@origin, @id, @close_slide_over_target)
-          }
+          phx-click-away={@close_on_click_away && hide_slide_over(@origin, @close_slide_over_target)}
+          phx-window-keydown={@close_on_escape && hide_slide_over(@origin, @close_slide_over_target)}
           phx-key="escape"
         >
           <!-- Header -->
           <div class="pc-slideover__header">
             <div class="pc-slideover__header__container">
-              <div :if={@title} class="pc-slideover__header__text">
+              <div class="pc-slideover__header__text">
                 {@title}
               </div>
 
               <button
                 type="button"
-                phx-click={hide_slide_over(@origin, @id, @close_slide_over_target)}
+                phx-click={hide_slide_over(@origin, @close_slide_over_target)}
                 class="pc-slideover__header__button"
               >
                 <div class="sr-only">Close</div>
@@ -96,43 +90,53 @@ defmodule PetalComponents.SlideOver do
     """
   end
 
-  def show_slide_over(origin, id \\ "slide-over") do
+  def show_slide_over(origin) do
     {start_class, end_class} = get_transition_classes(origin)
 
     %JS{}
-    |> JS.show(to: "##{id}")
+    |> JS.show(to: "#slide-over")
     |> JS.show(
-      to: "##{id}-overlay",
-      time: 300,
+      to: "#slide-over-overlay",
       transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
     )
     |> JS.show(
-      to: "##{id}-content",
-      time: 300,
-      transition: {"transition-all transform ease-out duration-300", start_class, end_class}
+      to: "#slide-over-content",
+      transition: {
+        "transition-all transform ease-out duration-300",
+        start_class,
+        end_class
+      }
     )
     |> JS.add_class("overflow-hidden", to: "body")
-    |> JS.focus_first(to: "##{id}-content")
+    |> JS.focus_first(to: "#slide-over-content")
   end
 
   # The live view that calls <.slide_over> will need to handle the "close_slide_over" event. eg:
   # def handle_event("close_slide_over", _, socket) do
   #   {:noreply, push_patch(socket, to: Routes.moderate_users_path(socket, :index))}
   # end
-  def hide_slide_over(origin, id \\ "slide-over", close_slide_over_target \\ nil) do
+  def hide_slide_over(origin, close_slide_over_target \\ nil) do
     {end_class, start_class} = get_transition_classes(origin)
 
     js =
       JS.remove_class("overflow-hidden", to: "body")
       |> JS.hide(
-        transition: {"ease-in duration-200", "opacity-100", "opacity-0"},
-        to: "##{id}-overlay"
+        transition: {
+          "ease-in duration-200",
+          "opacity-100",
+          "opacity-0"
+        },
+        to: "#slide-over-overlay"
       )
       |> JS.hide(
-        transition: {"ease-in duration-200", start_class, end_class},
-        to: "##{id}-content"
+        transition: {
+          "ease-in duration-200",
+          start_class,
+          end_class
+        },
+        to: "#slide-over-content"
       )
-      |> JS.hide(to: "##{id}", transition: {"duration-200", "", ""})
+      |> JS.hide(to: "#slide-over")
 
     if close_slide_over_target do
       JS.push(js, "close_slide_over", target: close_slide_over_target)
@@ -151,7 +155,7 @@ defmodule PetalComponents.SlideOver do
   end
 
   defp get_classes(max_width, origin, class) do
-    base_classes = "hidden pc-slideover__box"
+    base_classes = "pc-slideover__box"
 
     slide_over_classes =
       case origin do

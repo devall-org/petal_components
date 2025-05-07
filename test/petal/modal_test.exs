@@ -117,13 +117,13 @@ defmodule PetalComponents.ModalTest do
       <.modal class="h-full"></.modal>
       """)
 
-    assert html =~ "\"hidden pc-modal__box pc-modal__box--md h-full\""
+    assert html =~ "\"pc-modal__box--md pc-modal__box h-full\""
 
     html =
       rendered_to_string(~H"""
       <.modal></.modal>
       """)
 
-    assert html =~ "\"hidden pc-modal__box pc-modal__box--md \""
+    assert html =~ "\"pc-modal__box--md pc-modal__box \""
   end
 end
