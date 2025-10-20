@@ -2,7 +2,7 @@ defmodule PetalComponents.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/petalframework/petal_components"
-  @version "2.8.0"
+  @version "3.0.1"
 
   def project do
     [
@@ -49,6 +49,7 @@ defmodule PetalComponents.MixProject do
       {:wallaby, "~> 0.30.9", runtime: false, only: :test},
       {:phoenix, "~> 1.7"},
       {:phoenix_live_view, "~> 1.0"},
+      {:lazy_html, ">= 0.0.0", only: :test},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:jason, "~> 1.2", only: [:dev, :test]},
@@ -58,7 +59,7 @@ defmodule PetalComponents.MixProject do
       {:excoveralls, "~> 0.10", only: :test},
       {:heroicons,
        github: "tailwindlabs/heroicons",
-       tag: "v2.1.5",
+       tag: "v2.2.0",
        app: false,
        compile: false,
        sparse: "optimized",
