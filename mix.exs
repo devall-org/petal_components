@@ -18,8 +18,13 @@ defmodule PetalComponents.MixProject do
       aliases: [
         audit: ["format", "credo", "coveralls"]
       ],
-      test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [
+      test_coverage: [tool: ExCoveralls]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
         wallaby: :test,
         coveralls: :test,
         "coveralls.detail": :test,
