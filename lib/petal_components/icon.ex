@@ -27,7 +27,7 @@ defmodule PetalComponents.Icon do
 
     attr :rest, :global,
       doc: "the arbitrary HTML attributes for the heroicon container",
-      include: ~w(role aria-hidden)
+      include: ~w(role aria-hidden x-cloak)
 
     attr :name, :string, required: true
     attr :class, :any, default: nil, doc: "class applied to heroicon container"
