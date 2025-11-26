@@ -21,7 +21,7 @@ defmodule PetalComponents.Field do
   attr :name, :any,
     doc: "the name of the input. If not passed, it will be generated automatically from the field"
 
-  attr :label, :string,
+  attr :label, :string, default: nil,
     doc:
       "the label for the input. If not passed, it will be generated automatically from the field"
 
@@ -152,7 +152,7 @@ defmodule PetalComponents.Field do
   def field(%{type: "select"} = assigns) do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <select
@@ -175,7 +175,7 @@ defmodule PetalComponents.Field do
   def field(%{type: "textarea"} = assigns) do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <textarea
@@ -200,6 +200,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <.field_label
+        :if={@label}
         required={@required}
         for={@id}
         class={[@required && "pc-label--required", @label_class]}
@@ -250,7 +251,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} class={@label_class}>
+      <.field_label :if={@label} required={@required} class={@label_class}>
         {@label}
       </.field_label>
       <input type="hidden" name={@name <> "[]"} value="" />
@@ -298,7 +299,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} class={@label_class}>
+      <.field_label :if={@label} required={@required} class={@label_class}>
         {@label}
       </.field_label>
       <div class={[
@@ -350,7 +351,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} class={@label_class}>
+      <.field_label :if={@label} required={@required} class={@label_class}>
         {@label}
       </.field_label>
       <div class={[
@@ -418,7 +419,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <div class="pc-password-field-wrapper" x-data="{ show: false }">
@@ -452,7 +453,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <!-- Field Label -->
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <!-- Copyable Field Wrapper -->
@@ -502,7 +503,7 @@ defmodule PetalComponents.Field do
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
       <!-- Field Label -->
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <!-- Clearable Field Wrapper -->
@@ -561,7 +562,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <div class="pc-date-input-wrapper">
@@ -590,7 +591,7 @@ defmodule PetalComponents.Field do
 
     ~H"""
     <.field_wrapper errors={@errors} name={@name} class={@wrapper_class} no_margin={@no_margin}>
-      <.field_label required={@required} for={@id} class={@label_class}>
+      <.field_label :if={@label} required={@required} for={@id} class={@label_class}>
         {@label}
       </.field_label>
       <input
